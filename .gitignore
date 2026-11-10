@@ -11,3 +11,6 @@
 
 # goreleaser output
 /dist/
+
+# Secrets / local env
+/.env

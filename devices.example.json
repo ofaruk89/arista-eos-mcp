@@ -1,39 +1,13 @@
 {
   "read_only": true,
   "timeout_seconds": 30,
-  "allowed_management_prefixes": ["192.0.2.0/24"],
   "defaults": {
-    "username": "admin",
-    "password": "secret",
-    "enable_password": "",
-    "gnmi_insecure": true,
-    "tls_skip_verify": true
+    "username": "CHANGE_ME_USER",
+    "password": "CHANGE_ME_PASSWORD"
   },
   "devices": [
-    {
-      "name": "leaf1",
-      "host": "192.0.2.10",
-      "username": "admin",
-      "password": "secret",
-      "enable_password": "",
-      "eapi_transport": "https",
-      "eapi_port": 443,
-      "gnmi_port": 6030,
-      "gnmi_insecure": true,
-      "tls_skip_verify": true
-    },
-    {
-      "name": "leaf2",
-      "host": "192.0.2.11",
-      "username": "admin",
-      "password": "secret",
-      "gnmi_insecure": true
-    },
-    {
-      "name": "spine1",
-      "host": "192.0.2.20",
-      "username": "readonly",
-      "password": "ro-pass"
-    }
+    {"name": "switch1", "host": "192.0.2.10"},
+    {"name": "switch2", "host": "192.0.2.11"},
+    {"name": "switch3", "host": "192.0.2.12", "username": "farkli-user", "password": "farkli-sifre"}
   ]
 }

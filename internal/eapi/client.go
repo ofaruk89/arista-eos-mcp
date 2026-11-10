@@ -18,6 +18,10 @@ type Client struct {
 	node     *goeapi.Node
 	readOnly bool
 	secrets  []string // credential strings to scrub from returned errors
+	// hasEnable is true when an enable password is configured. When false,
+	// commands are sent as-is: goeapi's Node.RunCommands would otherwise
+	// prepend a bare "enable", which accounts without enable rights reject.
+	hasEnable bool
 }
 
 // New connects to the EOS device dev over eAPI. readOnly enables the safety
@@ -43,7 +47,7 @@ func New(dev *config.Device, readOnly bool) (*Client, error) {
 		node.EnableAuthentication(dev.EnablePassword)
 	}
 
-	return &Client{node: node, readOnly: readOnly, secrets: secrets}, nil
+	return &Client{node: node, readOnly: readOnly, secrets: secrets, hasEnable: dev.EnablePassword != ""}, nil
 }
 
 // credentialSecrets collects the non-empty credential strings that must never
@@ -109,7 +113,7 @@ func (c *Client) RunCommands(commands []string, encoding string) ([]Result, erro
 		}
 	}
 
-	resp, err := c.node.RunCommands(commands, encoding)
+	resp, err := c.execute(commands, encoding)
 	if err != nil {
 		return nil, scrubSecrets(fmt.Errorf("eAPI command execution failed: %w", err), c.secrets)
 	}
@@ -142,9 +146,28 @@ func (c *Client) RunningConfig() (string, error) {
 			return "", err
 		}
 	}
-	cfg := c.node.RunningConfig()
+	var cfg string
+	if c.hasEnable {
+		cfg = c.node.RunningConfig()
+	} else if res, err := c.RunCommands([]string{"show running-config all"}, "text"); err == nil && len(res) > 0 {
+		cfg = res[0].Text
+	}
 	if cfg == "" {
 		return "", fmt.Errorf("failed to retrieve running-config")
 	}
 	return cfg, nil
+}
+
+// execute sends commands to the device. With an enable password it defers to
+// goeapi (which prepends the enable sequence); without one it talks to the
+// connection directly so no "enable" command is sent.
+func (c *Client) execute(commands []string, encoding string) (*goeapi.JSONRPCResponse, error) {
+	if c.hasEnable {
+		return c.node.RunCommands(commands, encoding)
+	}
+	cmds := make([]interface{}, len(commands))
+	for i, cmd := range commands {
+		cmds[i] = cmd
+	}
+	return c.node.GetConnection().Execute(cmds, encoding)
 }

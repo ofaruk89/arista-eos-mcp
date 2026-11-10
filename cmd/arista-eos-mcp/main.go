@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"crypto/subtle"
 	"log"
 	"net/http"
 	"os"
@@ -54,8 +55,15 @@ func main() {
 	case "http", "streamable", "streamable-http":
 		addr := getenvDefault("MCP_HTTP_ADDR", ":8080")
 		handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server { return server }, nil)
+		var h http.Handler = handler
+		if token := os.Getenv("MCP_AUTH_TOKEN"); token != "" {
+			h = bearerAuth(token, handler)
+			logger.Printf("bearer token authentication enabled")
+		} else {
+			logger.Printf("WARNING: MCP_AUTH_TOKEN not set; HTTP endpoint is unauthenticated")
+		}
 		logger.Printf("starting MCP server on http %s", addr)
-		if err := http.ListenAndServe(addr, handler); err != nil {
+		if err := http.ListenAndServe(addr, h); err != nil {
 			logger.Fatalf("server stopped: %v", err)
 		}
 	default:
@@ -68,4 +76,17 @@ func getenvDefault(key, def string) string {
 		return v
 	}
 	return def
+}
+
+// bearerAuth rejects requests that do not carry "Authorization: Bearer <token>".
+func bearerAuth(token string, next http.Handler) http.Handler {
+	want := []byte("Bearer " + token)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if subtle.ConstantTimeCompare([]byte(r.Header.Get("Authorization")), want) != 1 {
+			w.Header().Set("WWW-Authenticate", "Bearer")
+			http.Error(w, `{"error":"unauthorized"}`, http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

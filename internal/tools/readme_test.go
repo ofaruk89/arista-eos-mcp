@@ -13,7 +13,7 @@ import (
 // is how duplicate and mis-documented topics get added. Nothing else in the
 // build reads it.
 
-const readmePath = "../../README.md"
+const readmePath = "../../docs/UPSTREAM-README.md"
 
 // readmeTopicTable parses the "| Topic | Command |" table out of the README and
 // returns it as topic -> command.

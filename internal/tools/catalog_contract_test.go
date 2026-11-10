@@ -39,9 +39,8 @@ type eapiRequest struct {
 	} `json:"params"`
 }
 
-// commands returns the requested commands as strings. goeapi always prepends an
-// "enable" step, which is either a bare string or, when an enable password is
-// configured, a {"cmd":"enable","input":...} object; both forms are flattened.
+// commands returns the requested commands as strings. Object-form commands
+// (e.g. {"cmd":"enable","input":...}) are flattened to their "cmd" string.
 func (r eapiRequest) commands() []string {
 	out := make([]string, 0, len(r.Params.Cmds))
 	for _, c := range r.Params.Cmds {
@@ -237,13 +236,13 @@ func TestCatalogTopicsReachEAPI(t *testing.T) {
 				t.Errorf("encoding on the wire is %q, catalog declares %q", req.Params.Format, spec.encoding)
 			}
 
-			// goeapi prepends "enable"; the tool's own command is what follows.
+			// With no enable password the command must go out alone, with no "enable" step.
 			cmds := req.commands()
-			if len(cmds) != 2 {
-				t.Fatalf("sent %d commands %v, want the enable step plus exactly one command", len(cmds), cmds)
+			if len(cmds) != 1 {
+				t.Fatalf("sent %d commands %v, want exactly one command (no enable step)", len(cmds), cmds)
 			}
-			if cmds[1] != spec.command {
-				t.Errorf("command on the wire is %q, catalog declares %q", cmds[1], spec.command)
+			if cmds[0] != spec.command {
+				t.Errorf("command on the wire is %q, catalog declares %q", cmds[0], spec.command)
 			}
 
 			// The result is rendered by formatResults, which heads each block
@@ -269,7 +268,7 @@ func TestCatalogTopicHonoursDeviceArgument(t *testing.T) {
 
 	callOK(t, cs, "get_show_data", map[string]any{"topic": "version", "device": "spine1"})
 
-	if cmds := fake.soleRequest(t).commands(); len(cmds) != 2 || cmds[1] != "show version" {
+	if cmds := fake.soleRequest(t).commands(); len(cmds) != 1 || cmds[0] != "show version" {
 		t.Errorf("explicit device changed what was sent: %v", cmds)
 	}
 }
@@ -297,11 +296,11 @@ func TestIPRouteBuildsCommand(t *testing.T) {
 			callOK(t, cs, "get_ip_route", tc.args)
 
 			cmds := fake.soleRequest(t).commands()
-			if len(cmds) != 2 {
-				t.Fatalf("sent %d commands %v, want the enable step plus exactly one command", len(cmds), cmds)
+			if len(cmds) != 1 {
+				t.Fatalf("sent %d commands %v, want exactly one command (no enable step)", len(cmds), cmds)
 			}
-			if cmds[1] != tc.want {
-				t.Errorf("command on the wire is %q, want %q", cmds[1], tc.want)
+			if cmds[0] != tc.want {
+				t.Errorf("command on the wire is %q, want %q", cmds[0], tc.want)
 			}
 		})
 	}

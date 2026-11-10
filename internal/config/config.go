@@ -145,6 +145,42 @@ func (d *Defaults) valid() bool {
 	return d != nil && d.Username != "" && d.Password != ""
 }
 
+// fillDevice copies any field a predefined device leaves unset from the shared
+// defaults, so devices that share credentials only need a name and host. Values
+// set on the device itself always win. Safe to call on a nil receiver.
+func (d *Defaults) fillDevice(dev *Device) {
+	if d == nil {
+		return
+	}
+	if dev.Username == "" {
+		dev.Username = d.Username
+	}
+	if dev.Password == "" {
+		dev.Password = d.Password
+	}
+	if dev.EnablePassword == "" {
+		dev.EnablePassword = d.EnablePassword
+	}
+	if dev.EAPITransport == "" {
+		dev.EAPITransport = d.EAPITransport
+	}
+	if dev.EAPIPort == 0 {
+		dev.EAPIPort = d.EAPIPort
+	}
+	if dev.GNMIPort == 0 {
+		dev.GNMIPort = d.GNMIPort
+	}
+	if dev.GNMIInsecure == nil {
+		dev.GNMIInsecure = d.GNMIInsecure
+	}
+	if dev.GNMITLSCA == "" {
+		dev.GNMITLSCA = d.GNMITLSCA
+	}
+	if dev.TLSSkipVerify == nil {
+		dev.TLSSkipVerify = d.TLSSkipVerify
+	}
+}
+
 // NewDynamicDevice builds an in-memory Device for an ad-hoc host using these
 // defaults. Returns nil if defaults are not usable.
 func (d *Defaults) NewDynamicDevice(host string) *Device {
@@ -222,6 +258,7 @@ func loadFile(path string) (*Config, error) {
 	seen := make(map[string]bool, len(c.Devices))
 	for i := range c.Devices {
 		d := &c.Devices[i]
+		c.Defaults.fillDevice(d)
 		applyDeviceDefaults(d)
 		if d.Name == "" {
 			return nil, fmt.Errorf("device #%d is missing a name", i+1)
