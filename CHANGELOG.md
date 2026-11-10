@@ -1,5 +1,51 @@
 # Changelog
 
+## [2.0.0](https://github.com/ofaruk89/arista-eos-mcp/compare/v1.0.0...v2.0.0) (2026-11-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* the 57 individual get_* show tools are replaced by get_show_data with a topic enum. Saved prompts, automations, and tool-scoped permission allowlists (e.g. mcp__arista-eos-mcp__get_bgp_summary) that name the old tools must be updated.
+
+### Features
+
+* add additional show commands for routing, multicast, security, and system details ([1f3afa8](https://github.com/ofaruk89/arista-eos-mcp/commit/1f3afa8e3602c3b176c2cb855540e6e47c392016))
+* add catalogs ([86f7e3f](https://github.com/ofaruk89/arista-eos-mcp/commit/86f7e3f7a0e49ffe8dc3e3cee9e9ad54c0c916f9))
+* add GitHub Actions workflow for testing Go code ([d9159de](https://github.com/ofaruk89/arista-eos-mcp/commit/d9159de22005988d03339223626bbb50fe93876c))
+* add GitHub Actions workflow for testing Go code ([0627e42](https://github.com/ofaruk89/arista-eos-mcp/commit/0627e42f4b36a3843568bbc86504479c5471324c))
+* add MIT License and update README with license information ([1a3d488](https://github.com/ofaruk89/arista-eos-mcp/commit/1a3d488f40e237abdaabe1ffeab08f2979f5ad59))
+* add MIT License and update README with license information ([dc106c9](https://github.com/ofaruk89/arista-eos-mcp/commit/dc106c95562bbec542e9b3ae9c84ce1e9fc70e3b))
+* add new show commands for VXLAN, BGP EVPN, and interface status ([3f9cf1b](https://github.com/ofaruk89/arista-eos-mcp/commit/3f9cf1b7cbf35afa4d15b3aaedd5cc0fba292313))
+* add QoS, storm control, DHCP relay, sFlow, and VRRP show commands ([52f075e](https://github.com/ofaruk89/arista-eos-mcp/commit/52f075ec812c76b4d07b7f6deb19b3ab86faf8b5))
+* add release-please configuration and update version to 0.1.0 ([5d213ce](https://github.com/ofaruk89/arista-eos-mcp/commit/5d213ce6434c56ca0e590cc602e12ded46423cd6))
+* add release-please configuration and update version to 0.1.0 ([9565837](https://github.com/ofaruk89/arista-eos-mcp/commit/9565837ebbd8a1ed0728636f0dde5eca01b4166c))
+* add show commands for MACsec, tunnels, MPLS, and VXLAN counters ([62062d2](https://github.com/ofaruk89/arista-eos-mcp/commit/62062d2fd4691dadc5d36892475fca5a2e0c23bd))
+* add show commands for PTP, AAA, TACACS+, RADIUS, and SNMP ([44c5186](https://github.com/ofaruk89/arista-eos-mcp/commit/44c5186a405581435ee5fd64e30a4c25210de29d))
+* Bearer token auth, shared defaults, enable-less eAPI, compose deploy ([fbdc532](https://github.com/ofaruk89/arista-eos-mcp/commit/fbdc532ee70f35f304e4e9b1b8c4cb417f4ba696))
+* collapse 57 curated show tools into get_show_data ([3929b50](https://github.com/ofaruk89/arista-eos-mcp/commit/3929b502942a1a9570a8ba5dae72b1503a8da117))
+* enhance tool descriptions and add server instructions for clarity ([ae7f4d1](https://github.com/ofaruk89/arista-eos-mcp/commit/ae7f4d12b66b558559758bdf541f51f84354f271))
+* enhance tool descriptions and add server instructions for clarity ([05f3465](https://github.com/ofaruk89/arista-eos-mcp/commit/05f3465b91062ea4aba2d3916a9c05ae44abd171))
+* first commit / Add read-only tools and diagnostics for device management ([95bb0be](https://github.com/ofaruk89/arista-eos-mcp/commit/95bb0be1ff8fa078428130903a912ab9ae57940a))
+* Go version setup in release workflow to use go.mod ([a2ea247](https://github.com/ofaruk89/arista-eos-mcp/commit/a2ea247f302291328a3456400fce55924264534e))
+* prefer management IPv4 in device catalog and add prefix allowlist ([#14](https://github.com/ofaruk89/arista-eos-mcp/issues/14)) ([719ae9b](https://github.com/ofaruk89/arista-eos-mcp/commit/719ae9b11d19d56f389aeb041d1d315d08e24711))
+* update installation instructions and add releases section in README ([55d9c72](https://github.com/ofaruk89/arista-eos-mcp/commit/55d9c720a9deb045f0d997175e6421e3f9dac78f))
+* update release-please configuration and add goreleaser setup ([5acc684](https://github.com/ofaruk89/arista-eos-mcp/commit/5acc6843efde1cad813eac4a0eb3ccdb06ebdf6f))
+* update release-please configuration and add goreleaser setup ([6152876](https://github.com/ofaruk89/arista-eos-mcp/commit/6152876a275493508b66f790d75d547e2b33a2b4))
+* update tool usage instructions for clarity and specificity ([d0706a1](https://github.com/ofaruk89/arista-eos-mcp/commit/d0706a1010c08e0c8e96e91335a9d355ea38c3c3))
+
+
+### Bug Fixes
+
+* add device resolution by IP and corresponding tests ([376934e](https://github.com/ofaruk89/arista-eos-mcp/commit/376934ed6c6e87f39768b124385a1606d7a274e7))
+* add device resolution by IP and corresponding tests ([ef72ed8](https://github.com/ofaruk89/arista-eos-mcp/commit/ef72ed834f26c0141b91dce7cc06067ee2bf208f))
+* adjust formatting of gNMI settings in Device struct ([82a627e](https://github.com/ofaruk89/arista-eos-mcp/commit/82a627ea3e731e9628c261030f230694ade6a0e2))
+* correct six get_show_data commands EOS rejects ([4b36755](https://github.com/ofaruk89/arista-eos-mcp/commit/4b367557b1b79d6bc6e01d24fed821df020ad92c))
+* **deps:** bump x/net, x/text and grpc to patched versions ([1f70cd1](https://github.com/ofaruk89/arista-eos-mcp/commit/1f70cd1fc4b403abef12b0145f812f874e4095d4))
+* Potential fix for pull request finding ([bbf879f](https://github.com/ofaruk89/arista-eos-mcp/commit/bbf879f61b29d51d4430878bb667927be88aff12))
+* Potential fix for pull request finding ([412312b](https://github.com/ofaruk89/arista-eos-mcp/commit/412312bbae5bb2563e240482be126773c1e8c56c))
+* redact credentials from eAPI error messages ([#15](https://github.com/ofaruk89/arista-eos-mcp/issues/15)) ([6e93901](https://github.com/ofaruk89/arista-eos-mcp/commit/6e93901776e2fb315a075d1c83ca2d420a3addde))
+* show commands for LACP, SNMP, MACsec, tunnels, and VXLAN ([4386dd7](https://github.com/ofaruk89/arista-eos-mcp/commit/4386dd7419e9645bbdec11729cbf6160474888f9))
+
 ## [1.0.0](https://github.com/x86taka/arista-eos-mcp/compare/v0.4.1...v1.0.0) (2026-08-17)
 
 

@@ -18,7 +18,7 @@ import (
 	"github.com/x86taka/arista-eos-mcp/internal/tools"
 )
 
-const version = "1.0.0" // x-release-please-version
+const version = "2.0.0" // x-release-please-version
 
 func main() {
 	// Logs go to stderr so they don't corrupt the stdio MCP transport.
