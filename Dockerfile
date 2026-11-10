@@ -12,13 +12,17 @@ RUN --mount=type=cache,target=/go/pkg/mod go mod download
 COPY . .
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/arista-eos-mcp ./cmd/arista-eos-mcp
+    CGO_ENABLED=0 go build -trimpath -tags timetzdata -ldflags="-s -w" -o /out/arista-eos-mcp ./cmd/arista-eos-mcp
 
 # ---- runtime stage ----
-FROM gcr.io/distroless/static-debian12:nonroot
+# scratch: no OS package database, so no Debian tzdata/ca-certificates to go
+# stale in scans. Timezone data is embedded in the binary (-tags timetzdata) and
+# the CA bundle is copied from the (current) build stage.
+FROM scratch
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=build /out/arista-eos-mcp /usr/local/bin/arista-eos-mcp
 
 # HTTP transport listens here by default (override with MCP_HTTP_ADDR).
 EXPOSE 8080
-USER nonroot:nonroot
+USER 65532:65532
 ENTRYPOINT ["/usr/local/bin/arista-eos-mcp"]
