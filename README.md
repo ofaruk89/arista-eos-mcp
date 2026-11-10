@@ -37,6 +37,23 @@ docker login harbor.sahibindenlocal.net
 docker push harbor.sahibindenlocal.net/nwsec/arista/arista-eos-mcp:<surum>
 ```
 
+## GitHub Container Registry (ghcr.io)
+`.github/workflows/ghcr.yml` imaji GitHub Actions ile build edip `ghcr.io/ofaruk89/arista-eos-mcp` altina yollar
+(`master` push'u -> `:latest` ve `:sha-<kisa>`, `v*` tag'i -> `:1.2.3`; Actions > ghcr > Run workflow ile elle de calistirilabilir).
+Ek secret gerekmez (`GITHUB_TOKEN`). Ilk calismadan sonra paket **private** olur; gorunurlugu
+GitHub > Packages > arista-eos-mcp > Package settings'ten ayarlayin.
+
+ghcr'dan kullanmak icin `.env`:
+```
+IMAGE_REPO=ghcr.io/ofaruk89/arista-eos-mcp
+IMAGE_TAG=latest
+```
+Private paket icin sunucuda bir kez giris gerekir (token'da `read:packages` yetkisi):
+```sh
+echo <PAT> | docker login ghcr.io -u ofaruk89 --password-stdin
+docker compose pull && docker compose up -d
+```
+
 ## Istemci config'i
 Claude Code:
 ```sh
