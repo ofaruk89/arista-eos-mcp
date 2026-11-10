@@ -1,6 +1,7 @@
 services:
   arista-eos-mcp:
-    image: ${IMAGE_REPO:-harbor.sahibindenlocal.net/nwsec/arista/arista-eos-mcp}:${IMAGE_TAG:-1.2.2}
+    image: ${IMAGE_REPO:-harbor.sahibindenlocal.net/nwsec/arista/arista-eos-mcp}:${IMAGE_TAG:-latest}
+    pull_policy: always   # her 'up' komutunda registry'deki en son imaji cek
     container_name: arista-eos-mcp
     restart: unless-stopped
     user: "0:0"   # devices.json 600 izinli ve root'a ait; okuyabilmesi icin

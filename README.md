@@ -26,9 +26,11 @@ docker compose up -d
 Switch'lerde eAPI acik olmali: `management api http-commands` > `protocol https` > `no shutdown`.
 
 ## Guncelleme
+Compose imaji `latest` etiketiyle ve `pull_policy: always` ile calisir; en son imaji almak icin:
 ```sh
-docker compose pull && docker compose up -d     # .env'de IMAGE_TAG degistirdikten sonra
+docker compose up -d      # her seferinde registry'den en son imaji ceker
 ```
+Belirli bir surume sabitlemek icin `.env` icinde `IMAGE_TAG=<surum>` yazin.
 
 ## Imaj build / Harbor'a gonderme
 ```sh
